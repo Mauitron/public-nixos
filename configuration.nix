@@ -2,6 +2,7 @@
 #0[System-Variables]
 let
   username = "username"; # Set your username here
+  git_username = "git username"; # Set your username here
   userEmail = "youremail@example.com";  # Set your email here
   timezone = "Region/City";  # Set your timezone here
 
@@ -396,21 +397,11 @@ services.openssh = {
     MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
   '';
 };
-
-  users.users.${username} = {
-  createHome = true;
-  home = "/home/${username}";
-  group = "users";
-   isNormalUser = true;
-    description = "${username}";
-    extraGroups = [ "networkmanager" "wheel" "video" "input" "storage" "plugdev" ];
-    packages = with pkgs; [ kdePackages.kate ];
-    
   programs.git = {
   enable = true;
   config = {
     user = {
-      name = "your git username";  
+      name = "${git_username}";  
       email = "${userEmail}"; 
     };
     init.defaultBranch = "main";
@@ -420,8 +411,19 @@ services.openssh = {
   };
 };
 
+
+  users.users.${username} = {
+  createHome = true;
+  home = "/home/${username}";
+  group = "users";
+   isNormalUser = true;
+    description = "${username}";
+    extraGroups = [ "networkmanager" "wheel" "video" "input" "storage" "plugdev" ];
+    packages = with pkgs; [ kdePackages.kate ];
+
 # for git integration add your SSH public keys here, remember to remove them if you are sharing the config.
 openssh.authorizedKeys.keys = [];
+    
   };
 
 #3[Networking]
@@ -1639,9 +1641,9 @@ hardware = {
   } else {};
 
 #8>[Bluetooth]
-
 bluetooth = {
   enable = true;
+  powerOnBoot = true;
   package = pkgs.bluez;
   settings = {
     General = {
@@ -1655,8 +1657,9 @@ bluetooth = {
       AutoConnect = true;
     };
   };
-};
   };
+};
+  
   ###########################################
   #  Audio Configuration
   ###########################################
@@ -2462,7 +2465,7 @@ systemd-tmpfiles-clean = {
         "image/gif" = "imv.desktop";
       };
     };
-gnome.gnome-bluetooth.enable = true;
+# gnome.gnome-bluetooth.enable = true;
   ###########################################
   #  Firewall & AV Security Settings
   ###########################################
@@ -4402,7 +4405,6 @@ env = { TERM = "xterm-256color" }
         tooltip = true;
         tooltip-format = "{icon} {volume}%\n{desc}";
       };
-
 "bluetooth" = {
     format = "󰂯";
     format-disabled = "󰂲";
@@ -5762,7 +5764,6 @@ window {
   #     # ln -sf /etc/customapp/subdir /home/username/.config/customapp/subdir
 
   #     # Set correct ownership
-  #     # config and associated scripts made my mauitron
   #     chown -R username:users /home/username/.config/customapp
   #   '';
   # };
